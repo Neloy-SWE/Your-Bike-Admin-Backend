@@ -1,13 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace your_bike_admin_backend.Models
+﻿namespace your_bike_admin_backend.Models
 {
-    public class Bike
+    public class AddBike
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         public required string Name { get; set; }
         public required string BrandName { get; set; }
         public double CC { get; set; }
@@ -26,6 +20,5 @@ namespace your_bike_admin_backend.Models
         public required string RearWheel { get; set; }
         public required string FrontTyre { get; set; }
         public required string RearTyre { get; set; }
-        public DateTime CreatedDate { get; set; }
     }
 }
