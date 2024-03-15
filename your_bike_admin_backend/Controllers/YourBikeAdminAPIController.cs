@@ -14,11 +14,13 @@ namespace your_bike_admin_backend.Controllers
         private readonly ILogManager _log = log;
         private readonly ApplicationDBContext _db = db;
 
+
+        // create bike method
+
         [HttpPost("AddBike")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult AddBike([FromBody] AddBike addBike)
         {
             if (_db.Bikes.FirstOrDefault(u => u.Name.ToLower() == addBike.Name.ToLower()) != null)
@@ -62,6 +64,31 @@ namespace your_bike_admin_backend.Controllers
             _db.Bikes.Add(bike);
             _db.SaveChanges();
             return CreatedAtAction(nameof(AddBike), bike);
+        }
+
+
+        // delete bike method
+
+        [HttpDelete("DeleteBike")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteBike(int Id)
+        {
+            Bike bike = _db.Bikes.FirstOrDefault(u => u.Id == Id)!;
+            if (bike == null)
+            {
+                return NotFound();
+            }
+            DeleteBike deleteBike = new()
+            {
+                Message = "Bike: " + bike.Name + " deleted successfully !!!",
+                Status = "success"
+            };
+
+            _db.Bikes.Remove(bike); 
+            _db.SaveChanges();
+            return Ok(deleteBike);
         }
     }
 }
