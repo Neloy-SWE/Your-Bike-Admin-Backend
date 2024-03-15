@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using your_bike_admin_backend.Data;
 using your_bike_admin_backend.Logs;
 using your_bike_admin_backend.Models;
@@ -14,6 +12,15 @@ namespace your_bike_admin_backend.Controllers
         private readonly ILogManager _log = log;
         private readonly ApplicationDBContext _db = db;
 
+
+        // get bike method
+
+        [HttpGet("GetBike")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<Bike>> GetBike()
+        {
+            return Ok(_db.Bikes.ToList());
+        }
 
         // create bike method
 
@@ -69,7 +76,7 @@ namespace your_bike_admin_backend.Controllers
 
         // delete bike method
 
-        [HttpDelete("DeleteBike")]
+        [HttpDelete("DeleteBike{Id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,9 +93,57 @@ namespace your_bike_admin_backend.Controllers
                 Status = "success"
             };
 
-            _db.Bikes.Remove(bike); 
+            _db.Bikes.Remove(bike);
             _db.SaveChanges();
             return Ok(deleteBike);
         }
+
+
+        // update bike method
+        [HttpPost("UpdateBike")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult UpdateBike([FromBody] Bike updateBike)
+        {
+            Bike bike = _db.Bikes.FirstOrDefault(u => u.Id == updateBike.Id)!;
+            if (bike == null)
+            {
+                return NotFound();
+            }
+            if (_db.Bikes.FirstOrDefault(u => u.Name.ToLower() == updateBike.Name.ToLower()) != null)
+            {
+                ModelState.AddModelError("CustomError", "Bike already Exists!");
+                return BadRequest(ModelState);
+            }
+            bike.Id = updateBike.Id;
+            bike.Name = updateBike.Name;
+            bike.BrandName = updateBike.BrandName;
+            bike.CC = updateBike.CC;
+            bike.Gears = updateBike.Gears;
+            bike.MaxPower = updateBike.MaxPower;
+            bike.MaxTorque = updateBike.MaxTorque;
+            bike.Mileage = updateBike.Mileage;
+            bike.FuelTankCapacity = updateBike.FuelTankCapacity;
+            bike.EngineOilCapacity = updateBike.EngineOilCapacity;
+            bike.SeatHeight = updateBike.SeatHeight;
+            bike.FrontSuspension = updateBike.FrontSuspension;
+            bike.RearSuspension = updateBike.RearSuspension;
+            bike.FrontBreak = updateBike.FrontBreak;
+            bike.RearBreak = updateBike.RearBreak;
+            bike.FrontWheel = updateBike.FrontWheel;
+            bike.RearWheel = updateBike.RearWheel;
+            bike.FrontTyre = updateBike.FrontTyre;
+            bike.RearTyre = updateBike.RearTyre;
+            bike.CreatedDate = DateTime.Now;
+
+
+
+            _db.Bikes.Update(bike);
+            _db.SaveChanges();
+            return Ok(bike);
+
+        }
+
     }
 }
