@@ -100,7 +100,7 @@ namespace your_bike_admin_backend.Controllers
 
 
         // update bike method
-        [HttpPost("UpdateBike")]
+        [HttpPut("UpdateBike")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
