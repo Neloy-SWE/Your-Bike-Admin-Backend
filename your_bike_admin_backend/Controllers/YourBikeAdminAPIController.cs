@@ -47,6 +47,7 @@ namespace your_bike_admin_backend.Controllers
             {
                 //Id = _db.Bikes.OrderByDescending(u => u.Id).FirstOrDefault()?.Id == null ? 1 : _db.Bikes.OrderByDescending(u => u.Id).FirstOrDefault()!.Id + 1,
                 Name = addBike.Name,
+                Image = addBike.Image,
                 BrandName = addBike.BrandName,
                 CC = addBike.CC,
                 Gears = addBike.Gears,
@@ -117,6 +118,7 @@ namespace your_bike_admin_backend.Controllers
                 return BadRequest(ModelState);
             }
             bike.Id = updateBike.Id;
+            bike.Image = updateBike.Image;
             bike.Name = updateBike.Name;
             bike.BrandName = updateBike.BrandName;
             bike.CC = updateBike.CC;

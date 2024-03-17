@@ -3,6 +3,7 @@
     public class AddBike
     {
         public required string Name { get; set; }
+        public required string Image { get; set; }
         public required string BrandName { get; set; }
         public double CC { get; set; }
         public int Gears { get; set; }

@@ -9,6 +9,7 @@ namespace your_bike_admin_backend.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public required string Name { get; set; }
+        public required string Image { get; set; }
         public required string BrandName { get; set; }
         public double CC { get; set; }
         public int Gears { get; set; }
