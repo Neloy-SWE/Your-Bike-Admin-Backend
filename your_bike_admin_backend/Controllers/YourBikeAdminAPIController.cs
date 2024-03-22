@@ -1,30 +1,100 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
 using your_bike_admin_backend.Data;
 using your_bike_admin_backend.Logs;
 using your_bike_admin_backend.Models;
+
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace your_bike_admin_backend.Controllers
 {
     [Route("apiAdmin/youBike")]
     [ApiController]
-    public class YourBikeAdminAPIController(ILogManager log, ApplicationDBContext db) : ControllerBase
+    public class YourBikeAdminAPIController(ILogManager log, ApplicationDBContext db, IConfiguration config) : ControllerBase
     {
         private readonly ILogManager _log = log;
         private readonly ApplicationDBContext _db = db;
+        private readonly IConfiguration _config = config;
+
+
+        [HttpPost("Login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Login([FromBody] Admin admin)
+        {
+            var getAdmin = _db.Admins.FirstOrDefault(u => u.phone == admin.phone && u.password == admin.password);
+
+            if (getAdmin == null)
+            {
+                return BadRequest("No admin found!");
+            }
+            var tokenString = GenerateJSONWebToken(admin.phone);
+
+            return Ok(new { token = tokenString });
+        }
+
+
+        private string GenerateJSONWebToken(String phone)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[] {
+        new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.PhoneNumber, phone),
+    };
+
+            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+                _config["Jwt:Issuer"],
+                claims,
+                expires: DateTime.Now.AddMinutes(120),
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
 
 
         // get bike method
 
-        [HttpGet("GetBike")]
+        [HttpGet("GetAllBikes")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Bike>> GetBike()
+        public ActionResult<IEnumerable<Bike>> GetAllBikes()
         {
             return Ok(_db.Bikes.ToList());
         }
 
+
+        [HttpGet("GetSingleBike{Id:int}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetSingleBike(int Id)
+        {
+            if (Id == 0)
+            {
+                return BadRequest("No bike found !");
+            }
+            var bike = Ok(_db.Bikes.FirstOrDefault(u => u.Id == Id));
+            if(bike.Value == null)
+            {
+                return NotFound("No bike found !");
+            }
+            return bike;
+        }
+
+
         // create bike method
 
         [HttpPost("AddBike")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -45,7 +115,6 @@ namespace your_bike_admin_backend.Controllers
             }
             Bike bike = new()
             {
-                //Id = _db.Bikes.OrderByDescending(u => u.Id).FirstOrDefault()?.Id == null ? 1 : _db.Bikes.OrderByDescending(u => u.Id).FirstOrDefault()!.Id + 1,
                 Name = addBike.Name,
                 Image = addBike.Image,
                 BrandName = addBike.BrandName,
@@ -78,6 +147,7 @@ namespace your_bike_admin_backend.Controllers
         // delete bike method
 
         [HttpDelete("DeleteBike{Id:int}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -102,6 +172,7 @@ namespace your_bike_admin_backend.Controllers
 
         // update bike method
         [HttpPut("UpdateBike")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

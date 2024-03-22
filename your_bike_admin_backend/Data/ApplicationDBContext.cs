@@ -7,5 +7,6 @@ namespace your_bike_admin_backend.Data
     {
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
         public DbSet<Bike> Bikes { get; set; }
+        public DbSet<Admin> Admins { get; set; }
     }
 }
