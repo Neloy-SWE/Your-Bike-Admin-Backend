@@ -32,11 +32,22 @@ namespace your_bike_admin_backend.Controllers
 
             if (getAdmin == null)
             {
-                return BadRequest("No admin found!");
+                BaseData<String> fail = new() {
+                    status = "fail",
+                    message = "No admin found!",
+                    data = ""
+                };
+                return BadRequest(fail);
             }
-            var tokenString = GenerateJSONWebToken(admin.phone);
 
-            return Ok(new { token = tokenString });
+            var tokenString = GenerateJSONWebToken(admin.phone);
+            BaseData<String> success = new()
+            {
+                status = "success",
+                message = "Log in success",
+                data = tokenString
+            };
+            return Ok(success);
         }
 
 
@@ -66,7 +77,12 @@ namespace your_bike_admin_backend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<Bike>> GetAllBikes()
         {
-            return Ok(_db.Bikes.ToList());
+            BaseData<List<Bike>> data = new() {
+                status = "success",
+                message = "Get All Bike",
+                data = _db.Bikes.ToList()
+            };
+            return Ok(data);
         }
 
 
