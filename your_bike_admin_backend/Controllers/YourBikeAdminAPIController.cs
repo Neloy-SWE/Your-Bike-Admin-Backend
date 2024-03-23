@@ -189,11 +189,11 @@ namespace your_bike_admin_backend.Controllers
 
             _db.Bikes.Add(bike);
             _db.SaveChanges();
-            BaseData<Bike> success = new()
+            BaseData<List<Bike>> success = new()
             {
                 Status = "success",
-                Message = "Add bike success!",
-                Data = bike
+                Message = "New bike added!",
+                Data = _db.Bikes.ToList()
             };
             return CreatedAtAction(nameof(AddBike), success);
         }
