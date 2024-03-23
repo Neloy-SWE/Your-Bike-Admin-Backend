@@ -2,8 +2,8 @@
 {
     public class BaseData<T>
     {
-        public string status { get; set; }
-        public string message { get; set; }
-        public T data { get; set; }
+        public required string Status { get; set; }
+        public required string Message { get; set; }
+        public required T Data { get; set; }
     }
 }

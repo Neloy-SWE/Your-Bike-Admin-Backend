@@ -32,10 +32,11 @@ namespace your_bike_admin_backend.Controllers
 
             if (getAdmin == null)
             {
-                BaseData<String> fail = new() {
-                    status = "fail",
-                    message = "No admin found!",
-                    data = ""
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "No admin found!",
+                    Data = ""
                 };
                 return BadRequest(fail);
             }
@@ -43,9 +44,9 @@ namespace your_bike_admin_backend.Controllers
             var tokenString = GenerateJSONWebToken(admin.phone);
             BaseData<String> success = new()
             {
-                status = "success",
-                message = "Log in success",
-                data = tokenString
+                Status = "success",
+                Message = "Log in success!",
+                Data = tokenString
             };
             return Ok(success);
         }
@@ -77,10 +78,11 @@ namespace your_bike_admin_backend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<Bike>> GetAllBikes()
         {
-            BaseData<List<Bike>> data = new() {
-                status = "success",
-                message = "Get All Bike",
-                data = _db.Bikes.ToList()
+            BaseData<List<Bike>> data = new()
+            {
+                Status = "success",
+                Message = "Get All Bikes!",
+                Data = _db.Bikes.ToList()
             };
             return Ok(data);
         }
@@ -96,14 +98,33 @@ namespace your_bike_admin_backend.Controllers
         {
             if (Id == 0)
             {
-                return BadRequest("No bike found !");
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "No bike found!",
+                    Data = ""
+                };
+                return BadRequest(fail);
             }
-            var bike = Ok(_db.Bikes.FirstOrDefault(u => u.Id == Id));
-            if(bike.Value == null)
+            Bike bike = _db.Bikes.FirstOrDefault(u => u.Id == Id)!;
+
+            if (Ok(bike).Value == null)
             {
-                return NotFound("No bike found !");
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "No bike found!",
+                    Data = ""
+                };
+                return NotFound(fail);
             }
-            return bike;
+            BaseData<Bike> success = new()
+            {
+                Status = "success",
+                Message = "Get bike data success!",
+                Data = bike
+            };
+            return Ok(success);
         }
 
 
@@ -118,16 +139,28 @@ namespace your_bike_admin_backend.Controllers
         {
             if (_db.Bikes.FirstOrDefault(u => u.Name.ToLower() == addBike.Name.ToLower()) != null)
             {
-                ModelState.AddModelError("CustomError", "Bike already Exists!");
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "Bike already Exists!",
+                    Data = ""
+                };
+
                 _log.Log("Bike already Exists!", "error");
-                return BadRequest(ModelState);
+                return BadRequest(fail);
             }
 
 
 
             if (addBike == null)
             {
-                return BadRequest(addBike);
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "Did not get any data from user-end!",
+                    Data = ""
+                };
+                return BadRequest(fail);
             }
             Bike bike = new()
             {
@@ -156,7 +189,13 @@ namespace your_bike_admin_backend.Controllers
 
             _db.Bikes.Add(bike);
             _db.SaveChanges();
-            return CreatedAtAction(nameof(AddBike), bike);
+            BaseData<Bike> success = new()
+            {
+                Status = "success",
+                Message = "Add bike success!",
+                Data = bike
+            };
+            return CreatedAtAction(nameof(AddBike), success);
         }
 
 
@@ -172,17 +211,25 @@ namespace your_bike_admin_backend.Controllers
             Bike bike = _db.Bikes.FirstOrDefault(u => u.Id == Id)!;
             if (bike == null)
             {
-                return NotFound();
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "Did not found any bike!",
+                    Data = ""
+                };
+                return NotFound(fail);
             }
-            DeleteBike deleteBike = new()
+
+            BaseData<String> success = new()
             {
-                Message = "Bike: " + bike.Name + " deleted successfully !!!",
-                Status = "success"
+                Status = "success",
+                Message = "Bike: " + bike.Name + " deleted successfully!",
+                Data = ""
             };
 
             _db.Bikes.Remove(bike);
             _db.SaveChanges();
-            return Ok(deleteBike);
+            return Ok(success);
         }
 
 
@@ -197,12 +244,23 @@ namespace your_bike_admin_backend.Controllers
             Bike bike = _db.Bikes.FirstOrDefault(u => u.Id == updateBike.Id)!;
             if (bike == null)
             {
-                return NotFound();
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "No bike found!",
+                    Data = ""
+                };
+                return NotFound(fail);
             }
             if (_db.Bikes.FirstOrDefault(u => u.Name.ToLower() == updateBike.Name.ToLower()) != null)
             {
-                ModelState.AddModelError("CustomError", "Bike already Exists!");
-                return BadRequest(ModelState);
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "Bike already Exists!",
+                    Data = ""
+                };
+                return BadRequest(fail);
             }
             bike.Id = updateBike.Id;
             bike.Image = updateBike.Image;
@@ -230,7 +288,14 @@ namespace your_bike_admin_backend.Controllers
 
             _db.Bikes.Update(bike);
             _db.SaveChanges();
-            return Ok(bike);
+
+            BaseData<Bike> success = new()
+            {
+                Status = "success",
+                Message = "Update bike success!",
+                Data = bike
+            };
+            return Ok(success);
 
         }
 
