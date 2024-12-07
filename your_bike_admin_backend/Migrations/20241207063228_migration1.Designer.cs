@@ -12,8 +12,8 @@ using your_bike_admin_backend.Data;
 namespace your_bike_admin_backend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240317150937_AddYourBikeAPIWithImageCoorection")]
-    partial class AddYourBikeAPIWithImageCoorection
+    [Migration("20241207063228_migration1")]
+    partial class migration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,27 @@ namespace your_bike_admin_backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("your_bike_admin_backend.Models.Admin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Admins");
+                });
 
             modelBuilder.Entity("your_bike_admin_backend.Models.Bike", b =>
                 {

@@ -91,7 +91,6 @@ namespace your_bike_admin_backend.Controllers
         [HttpGet("GetSingleBike{Id:int}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetSingleBike(int Id)
