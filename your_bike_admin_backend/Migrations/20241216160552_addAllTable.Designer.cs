@@ -12,8 +12,8 @@ using your_bike_admin_backend.Data;
 namespace your_bike_admin_backend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241216143003_addNotificationTable")]
-    partial class addNotificationTable
+    [Migration("20241216160552_addAllTable")]
+    partial class addAllTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,7 @@ namespace your_bike_admin_backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Admin");
+                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("your_bike_admin_backend.Models.Bike", b =>
@@ -131,6 +131,30 @@ namespace your_bike_admin_backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Bikes");
+                });
+
+            modelBuilder.Entity("your_bike_admin_backend.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
                 });
 #pragma warning restore 612, 618
         }

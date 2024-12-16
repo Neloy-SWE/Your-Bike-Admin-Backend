@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace your_bike_admin_backend.Migrations
 {
     /// <inheritdoc />
-    public partial class migration1 : Migration
+    public partial class addAllTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,6 +56,21 @@ namespace your_bike_admin_backend.Migrations
                 {
                     table.PrimaryKey("PK_Bikes", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Read = table.Column<bool>(type: "bit", nullable: false),
+                    Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Model = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
@@ -66,6 +81,9 @@ namespace your_bike_admin_backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Bikes");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
         }
     }
 }
