@@ -298,5 +298,21 @@ namespace your_bike_admin_backend.Controllers
 
         }
 
+        // get bike method
+
+        [HttpGet("GetAllNotifications")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<Notification>> GetAllNotifications()
+        {
+            BaseData<List<Notification>> data = new()
+            {
+                Status = "success",
+                Message = "Get All Notifications!",
+                Data = _db.Notifications.ToList()
+            };
+            return Ok(data);
+        }
+
     }
 }
