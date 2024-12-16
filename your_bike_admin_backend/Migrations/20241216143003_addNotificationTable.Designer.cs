@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using your_bike_admin_backend.Data;
 
@@ -11,9 +12,11 @@ using your_bike_admin_backend.Data;
 namespace your_bike_admin_backend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241216143003_addNotificationTable")]
+    partial class addNotificationTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,7 @@ namespace your_bike_admin_backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Admins");
+                    b.ToTable("Admin");
                 });
 
             modelBuilder.Entity("your_bike_admin_backend.Models.Bike", b =>
@@ -128,27 +131,6 @@ namespace your_bike_admin_backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Bikes");
-                });
-
-            modelBuilder.Entity("your_bike_admin_backend.Models.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notifications");
                 });
 #pragma warning restore 612, 618
         }
