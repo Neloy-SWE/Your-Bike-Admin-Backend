@@ -298,8 +298,7 @@ namespace your_bike_admin_backend.Controllers
 
         }
 
-        // get bike method
-
+        // get all notifications
         [HttpGet("GetAllNotifications")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -314,5 +313,48 @@ namespace your_bike_admin_backend.Controllers
             return Ok(data);
         }
 
+
+        // read notification
+        [HttpPut("ReadNotification{NotificationId:int}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult ReadNotification(int NotificationId)
+        {
+            Notification notification = _db.Notifications.FirstOrDefault(u => u.Id == NotificationId)!;
+            if (notification == null)
+            {
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "Did not found any notification!",
+                    Data = ""
+                };
+                return NotFound(fail);
+            }
+
+            if (notification.Read == false)
+            {
+                BaseData<String> fail = new()
+                {
+                    Status = "fail",
+                    Message = "Notification already read!",
+                    Data = ""
+                };
+                return BadRequest(fail);
+            }
+            notification.Read = false;
+            _db.Notifications.Update(notification);
+            _db.SaveChanges();
+
+            BaseData<String> success = new()
+            {
+                Status = "success",
+                Message = "Notification read done!",
+                Data = ""
+            };
+            return Ok(success);
+        }
     }
 }
