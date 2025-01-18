@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using your_bike_admin_backend.Data;
+using your_bike_admin_backend.Handler;
 using your_bike_admin_backend.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -72,6 +73,8 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 builder.Services.AddSingleton<ILogManager, SimpleLog>();
+//builder.WebHost.UseUrls()
+builder.Services.AddSingleton<NotificationWebSocketHandler>();
 
 var app = builder.Build();
 
@@ -85,9 +88,39 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
+
+
+// Configure the HTTP request pipeline.
+app.UseRouting();
+
+
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+//app.MapHub<NotificationWebSocketHandler>("/wss");
 
-app.Run();
+app.UseWebSockets();
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/ws/send")
+    {
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            var handler = app.Services.GetRequiredService<NotificationWebSocketHandler>();
+            var socket = await context.WebSockets.AcceptWebSocketAsync();
+            await handler.HandleAsync(socket);
+        }
+        else
+        {
+            context.Response.StatusCode = 400; // Bad Request
+        }
+    }
+    else
+    {
+        await next();
+    }
+});
+
+await app.RunAsync();

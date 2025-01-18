@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace your_bike_admin_backend.Controllers
 {
@@ -298,21 +299,22 @@ namespace your_bike_admin_backend.Controllers
 
         }
 
-        // get bike method
+        // get all notification
 
         [HttpGet("GetAllNotifications")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Notification>> GetAllNotifications()
+        public async Task<IActionResult> GetAllNotifications()
         {
+
+
             BaseData<List<Notification>> data = new()
             {
                 Status = "success",
                 Message = "Get All Notifications!",
-                Data = _db.Notifications.ToList()
+                Data = await _db.Notifications.ToListAsync()
             };
             return Ok(data);
         }
-
     }
 }
