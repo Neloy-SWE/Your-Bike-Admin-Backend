@@ -36,3 +36,6 @@ This is a simple project developed using asp.net core for **Your Bike Admin App*
 
 1. we will get a local server's url after run the project from output log. it will open swagger link. we will get all APIs and can check. we can implement it in any forntend project run in local server/pc.
 2. we can create a dev tunnel(google it to setup) and follow the same process no. 1. but we will get a remote server url and we can implement it in any remote frontend project run in the same internet.
+
+### to add admin user login data
+- by using db context, I have already created user table. we just have to add an user data in database manually.
